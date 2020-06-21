@@ -3,7 +3,9 @@ package com.lhfioravanso.assemblyvoting.service;
 import com.lhfioravanso.assemblyvoting.dto.AgendaRequestDto;
 import com.lhfioravanso.assemblyvoting.dto.AgendaResponseDto;
 import com.lhfioravanso.assemblyvoting.entity.Agenda;
+import com.lhfioravanso.assemblyvoting.exception.NotFoundException;
 import com.lhfioravanso.assemblyvoting.repository.AgendaRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
@@ -34,7 +36,10 @@ public class AgendaServiceImpl implements AgendaService {
 
     @Override
     public AgendaResponseDto getAgenda(String id) {
-        return null;
+        Agenda agenda = this.agendaRepository.findById(new ObjectId(id)).
+                orElseThrow(() -> new NotFoundException("Agenda not found."));
+
+        return agendaMapper.map(agenda, AgendaResponseDto.class);
     }
 
     @Override
