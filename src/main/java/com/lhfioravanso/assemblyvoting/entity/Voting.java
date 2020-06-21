@@ -4,7 +4,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 @Document(collection = "voting")
@@ -17,14 +17,14 @@ public class Voting {
 
     private Integer minutesToExpiration;
 
-    private Date expirationDate;
+    private Instant expirationDate;
 
     private List<Vote> votes;
 
-    public Voting(ObjectId id, Agenda agenda, Integer minutesToExpiration) {
-        this.id = id;
+    public Voting(Agenda agenda, Integer minutesToExpiration) {
         this.agenda = agenda;
         this.minutesToExpiration = minutesToExpiration;
+        this.expirationDate = Instant.now().plusSeconds(minutesToExpiration * 60);
     }
 
     public ObjectId getId() {
@@ -51,11 +51,11 @@ public class Voting {
         this.minutesToExpiration = minutesToExpiration;
     }
 
-    public Date getExpirationDate() {
+    public Instant getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(Date expirationDate) {
+    public void setExpirationDate(Instant expirationDate) {
         this.expirationDate = expirationDate;
     }
 
