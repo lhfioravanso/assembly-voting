@@ -18,6 +18,7 @@ public class SwaggerConfig {
     public Docket assemblyApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .useDefaultResponseMessages(false)
+                .groupName("1.0")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage(api_package))
                 .build()

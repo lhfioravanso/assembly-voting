@@ -14,8 +14,7 @@ public class Agenda {
 
     private String name;
 
-    public Agenda(ObjectId id, String name) {
-        this.id = id;
+    public Agenda(String name) {
         this.name = name;
     }
 
