@@ -5,7 +5,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Document(collection = "voting")
 public class Voting {
@@ -25,6 +27,7 @@ public class Voting {
         this.agenda = agenda;
         this.minutesToExpiration = minutesToExpiration;
         this.expirationDate = Instant.now().plusSeconds(minutesToExpiration * 60);
+        this.votes = new ArrayList<>();
     }
 
     public ObjectId getId() {
@@ -65,5 +68,23 @@ public class Voting {
 
     public void setVotes(List<Vote> votes) {
         this.votes = votes;
+    }
+
+    public void addVote(Vote vote) {
+        votes.add(vote);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Voting voting = (Voting) o;
+        return Objects.equals(id, voting.id) &&
+                Objects.equals(minutesToExpiration, voting.minutesToExpiration);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, minutesToExpiration);
     }
 }

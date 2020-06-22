@@ -1,8 +1,11 @@
 package com.lhfioravanso.assemblyvoting.service;
 
+import com.lhfioravanso.assemblyvoting.dto.VoteRequestDto;
+import com.lhfioravanso.assemblyvoting.dto.VoteResponseDto;
 import com.lhfioravanso.assemblyvoting.dto.VotingRequestDto;
 import com.lhfioravanso.assemblyvoting.dto.VotingResponseDto;
 import com.lhfioravanso.assemblyvoting.entity.Agenda;
+import com.lhfioravanso.assemblyvoting.entity.Vote;
 import com.lhfioravanso.assemblyvoting.entity.Voting;
 import com.lhfioravanso.assemblyvoting.exception.NotFoundException;
 import com.lhfioravanso.assemblyvoting.repository.AgendaRepository;
@@ -62,5 +65,21 @@ public class VotingServiceImpl implements VotingService{
         voting = this.votingRepository.insert(voting);
 
         return votingMapper.map(voting, VotingResponseDto.class);
+    }
+
+    @Override
+    public VoteResponseDto addVote(VoteRequestDto dto) {
+        Voting voting = this.votingRepository.findById(new ObjectId(dto.getVotingId())).
+                orElseThrow(() -> new NotFoundException("Voting not found."));
+
+        //TODO: validar se votação já expirou e se cpf já votou/pode votar..
+
+        Vote vote = new Vote(dto.getCpf(), dto.getAnswer());
+        voting.addVote(vote);
+        votingRepository.save(voting);
+
+        VoteResponseDto resp = new VoteResponseDto();
+        resp.setSuccess(true);
+        return resp;
     }
 }

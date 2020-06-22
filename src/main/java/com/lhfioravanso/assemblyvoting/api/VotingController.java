@@ -1,5 +1,6 @@
 package com.lhfioravanso.assemblyvoting.api;
 
+import com.lhfioravanso.assemblyvoting.dto.VoteRequestDto;
 import com.lhfioravanso.assemblyvoting.dto.VotingRequestDto;
 import com.lhfioravanso.assemblyvoting.dto.VotingResponseDto;
 import com.lhfioravanso.assemblyvoting.service.VotingService;
@@ -37,5 +38,11 @@ public class VotingController {
     @PostMapping()
     public ResponseEntity<?> create(@RequestBody VotingRequestDto voting){
         return ResponseEntity.ok(this.votingService.createVoting(voting));
+    }
+
+    @ApiOperation(value="add a vote in a voting", response = VotingResponseDto.class)
+    @PutMapping("/vote")
+    public ResponseEntity<?> vote(@RequestBody VoteRequestDto vote){
+        return ResponseEntity.ok(this.votingService.addVote(vote));
     }
 }
