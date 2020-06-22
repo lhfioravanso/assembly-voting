@@ -1,12 +1,7 @@
 package com.lhfioravanso.assemblyvoting.service;
 
-import com.lhfioravanso.assemblyvoting.dto.VoteRequestDto;
-import com.lhfioravanso.assemblyvoting.dto.VoteResponseDto;
-import com.lhfioravanso.assemblyvoting.dto.VotingRequestDto;
-import com.lhfioravanso.assemblyvoting.dto.VotingResponseDto;
-import com.lhfioravanso.assemblyvoting.entity.Agenda;
-import com.lhfioravanso.assemblyvoting.entity.Vote;
-import com.lhfioravanso.assemblyvoting.entity.Voting;
+import com.lhfioravanso.assemblyvoting.dto.*;
+import com.lhfioravanso.assemblyvoting.entity.*;
 import com.lhfioravanso.assemblyvoting.exception.BusinessException;
 import com.lhfioravanso.assemblyvoting.exception.NotFoundException;
 import com.lhfioravanso.assemblyvoting.repository.AgendaRepository;
@@ -27,13 +22,15 @@ public class VotingServiceImpl implements VotingService{
     private final VotingRepository votingRepository;
     private final AgendaRepository agendaRepository;
     private final ModelMapper votingMapper;
+    private final ModelMapper agendaMapper;
     private final Environment environment;
 
     @Autowired
-    public VotingServiceImpl(VotingRepository votingRepository, ModelMapper votingMapper, AgendaRepository agendaRepository, Environment environment) {
+    public VotingServiceImpl(VotingRepository votingRepository, ModelMapper votingMapper, ModelMapper agendaMapper, AgendaRepository agendaRepository, Environment environment) {
         this.votingRepository = votingRepository;
         this.agendaRepository = agendaRepository;
         this.votingMapper = votingMapper;
+        this.agendaMapper = agendaMapper;
         this.environment = environment;
     }
 
@@ -48,9 +45,7 @@ public class VotingServiceImpl implements VotingService{
 
     @Override
     public VotingResponseDto getVoting(String id) {
-        Voting voting = this.votingRepository.findById(new ObjectId(id)).
-                orElseThrow(() -> new NotFoundException("Voting not found."));
-
+        Voting voting = findVoting(id);
         return votingMapper.map(voting, VotingResponseDto.class);
     }
 
@@ -70,8 +65,7 @@ public class VotingServiceImpl implements VotingService{
 
     @Override
     public VoteResponseDto addVote(VoteRequestDto dto) {
-        Voting voting = this.votingRepository.findById(new ObjectId(dto.getVotingId())).
-                orElseThrow(() -> new NotFoundException("Voting not found."));
+        Voting voting = findVoting(dto.getVotingId());
 
         //TODO: validar se cpf pode votar #bonus..
         if (voting.isExpired())
@@ -84,9 +78,29 @@ public class VotingServiceImpl implements VotingService{
         voting.addVote(vote);
         votingRepository.save(voting);
 
-        VoteResponseDto resp = new VoteResponseDto();
-        resp.setSuccess(true);
-        return resp;
+        return new VoteResponseDto(true);
     }
 
+    @Override
+    public VotingResultResponseDto getVotingResult(String id) {
+        Voting voting = findVoting(id);
+        List<Vote> votes = voting.getVotes();
+
+        VoteCount voteCount = new VoteCount(
+                votes.stream().filter(vote -> vote.getAnswer().equals(Answer.YES)).count(),
+                votes.stream().filter(vote -> vote.getAnswer().equals(Answer.NO)).count()
+        );
+
+        VotingResultResponseDto resultResponseDto = new VotingResultResponseDto();
+        resultResponseDto.setAgenda(agendaMapper.map(voting.getAgenda(), AgendaResponseDto.class));
+        resultResponseDto.setDecision(voteCount.getYes()>voteCount.getNo()? Answer.YES : Answer.NO);
+        resultResponseDto.setVoteCount(voteCount);
+
+        return resultResponseDto;
+    }
+
+    private Voting findVoting(String id){
+       return this.votingRepository.findById(new ObjectId(id)).
+                orElseThrow(() -> new NotFoundException("Voting not found."));
+    }
 }

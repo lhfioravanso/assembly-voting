@@ -45,4 +45,10 @@ public class VotingController {
     public ResponseEntity<?> vote(@RequestBody VoteRequestDto vote){
         return ResponseEntity.ok(this.votingService.addVote(vote));
     }
+
+    @ApiOperation(value="get the voting result", response = VotingResponseDto.class)
+    @GetMapping("/result/{id}")
+    public ResponseEntity<?> getVotingResult(@PathVariable String id){
+        return ResponseEntity.ok(this.votingService.getVotingResult(id));
+    }
 }

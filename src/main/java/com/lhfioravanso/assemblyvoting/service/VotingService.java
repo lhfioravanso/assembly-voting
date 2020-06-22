@@ -1,9 +1,6 @@
 package com.lhfioravanso.assemblyvoting.service;
 
-import com.lhfioravanso.assemblyvoting.dto.VoteRequestDto;
-import com.lhfioravanso.assemblyvoting.dto.VoteResponseDto;
-import com.lhfioravanso.assemblyvoting.dto.VotingRequestDto;
-import com.lhfioravanso.assemblyvoting.dto.VotingResponseDto;
+import com.lhfioravanso.assemblyvoting.dto.*;
 
 import java.util.List;
 
@@ -12,4 +9,5 @@ public interface VotingService {
     VotingResponseDto getVoting(String id);
     VotingResponseDto createVoting(VotingRequestDto dto);
     VoteResponseDto addVote(VoteRequestDto dto);
+    VotingResultResponseDto getVotingResult(String id);
 }
