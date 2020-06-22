@@ -58,10 +58,11 @@ public class VotingServiceImpl implements VotingService{
         Agenda agenda = this.agendaRepository.findById(new ObjectId(dto.getAgendaId())).
                 orElseThrow(() -> new NotFoundException("Agenda not found."));
 
-        if (dto.getMinutesToExpiration() == null)
-            dto.setMinutesToExpiration(Integer.parseInt(Objects.requireNonNull(environment.getProperty("default.expiration.minutes"))));
+        Integer minutesToExpiration = dto.getMinutesToExpiration();
+        if (minutesToExpiration == null || minutesToExpiration <= 0)
+            minutesToExpiration = (Integer.parseInt(Objects.requireNonNull(environment.getProperty("default.expiration.minutes"))));
 
-        Voting voting = new Voting(agenda, dto.getMinutesToExpiration());
+        Voting voting = new Voting(agenda, minutesToExpiration);
         voting = this.votingRepository.insert(voting);
 
         return votingMapper.map(voting, VotingResponseDto.class);
@@ -90,6 +91,10 @@ public class VotingServiceImpl implements VotingService{
     @Override
     public VotingResultResponseDto getVotingResult(String id) {
         Voting voting = findVoting(id);
+
+        if (!voting.isExpired())
+            throw new BusinessException("Voting still open, it will close at " + voting.getExpirationDate().toString());
+
         List<Vote> votes = voting.getVotes();
 
         VoteCount voteCount = new VoteCount(
