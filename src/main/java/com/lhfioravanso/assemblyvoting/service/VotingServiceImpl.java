@@ -7,6 +7,7 @@ import com.lhfioravanso.assemblyvoting.dto.VotingResponseDto;
 import com.lhfioravanso.assemblyvoting.entity.Agenda;
 import com.lhfioravanso.assemblyvoting.entity.Vote;
 import com.lhfioravanso.assemblyvoting.entity.Voting;
+import com.lhfioravanso.assemblyvoting.exception.BusinessException;
 import com.lhfioravanso.assemblyvoting.exception.NotFoundException;
 import com.lhfioravanso.assemblyvoting.repository.AgendaRepository;
 import com.lhfioravanso.assemblyvoting.repository.VotingRepository;
@@ -72,7 +73,12 @@ public class VotingServiceImpl implements VotingService{
         Voting voting = this.votingRepository.findById(new ObjectId(dto.getVotingId())).
                 orElseThrow(() -> new NotFoundException("Voting not found."));
 
-        //TODO: validar se votação já expirou e se cpf já votou/pode votar..
+        //TODO: validar se cpf pode votar #bonus..
+        if (voting.isExpired())
+            throw new BusinessException("Voting already expired.");
+
+        if (voting.cpfAlreadyVoted(dto.getCpf()))
+            throw new BusinessException("Associated with CPF ("+dto.getCpf()+") already voted.");
 
         Vote vote = new Vote(dto.getCpf(), dto.getAnswer());
         voting.addVote(vote);
@@ -82,4 +88,5 @@ public class VotingServiceImpl implements VotingService{
         resp.setSuccess(true);
         return resp;
     }
+
 }
