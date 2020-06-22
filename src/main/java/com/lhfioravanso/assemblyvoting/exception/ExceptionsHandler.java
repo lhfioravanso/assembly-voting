@@ -19,4 +19,9 @@ public class ExceptionsHandler {
         return new ResponseEntity<>(new Error(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = IntegrationException.class)
+    protected ResponseEntity<Error> handleIntegrationException(IntegrationException ex){
+        return new ResponseEntity<>(new Error(ex.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
 }

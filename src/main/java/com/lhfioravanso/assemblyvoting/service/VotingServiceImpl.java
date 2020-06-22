@@ -4,6 +4,7 @@ import com.lhfioravanso.assemblyvoting.dto.*;
 import com.lhfioravanso.assemblyvoting.entity.*;
 import com.lhfioravanso.assemblyvoting.exception.BusinessException;
 import com.lhfioravanso.assemblyvoting.exception.NotFoundException;
+import com.lhfioravanso.assemblyvoting.integration.CpfService;
 import com.lhfioravanso.assemblyvoting.repository.AgendaRepository;
 import com.lhfioravanso.assemblyvoting.repository.VotingRepository;
 import org.bson.types.ObjectId;
@@ -24,14 +25,17 @@ public class VotingServiceImpl implements VotingService{
     private final ModelMapper votingMapper;
     private final ModelMapper agendaMapper;
     private final Environment environment;
+    private final CpfService cpfService;
 
     @Autowired
-    public VotingServiceImpl(VotingRepository votingRepository, ModelMapper votingMapper, ModelMapper agendaMapper, AgendaRepository agendaRepository, Environment environment) {
+    public VotingServiceImpl(VotingRepository votingRepository, ModelMapper votingMapper, ModelMapper agendaMapper,
+                             AgendaRepository agendaRepository, Environment environment, CpfService cpfService) {
         this.votingRepository = votingRepository;
         this.agendaRepository = agendaRepository;
         this.votingMapper = votingMapper;
         this.agendaMapper = agendaMapper;
         this.environment = environment;
+        this.cpfService = cpfService;
     }
 
     @Override
@@ -67,12 +71,14 @@ public class VotingServiceImpl implements VotingService{
     public VoteResponseDto addVote(VoteRequestDto dto) {
         Voting voting = findVoting(dto.getVotingId());
 
-        //TODO: validar se cpf pode votar #bonus..
         if (voting.isExpired())
             throw new BusinessException("Voting already expired.");
 
         if (voting.cpfAlreadyVoted(dto.getCpf()))
             throw new BusinessException("Associated with CPF ("+dto.getCpf()+") already voted.");
+
+        if (cpfService.isAbleToVote(dto.getCpf()))
+            throw new BusinessException("CPF is unable to vote.");
 
         Vote vote = new Vote(dto.getCpf(), dto.getAnswer());
         voting.addVote(vote);
