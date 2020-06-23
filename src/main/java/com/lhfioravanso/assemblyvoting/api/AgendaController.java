@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Api(value = "agenda")
-@RequestMapping(value = "v1/agenda", produces = "application/json")
+@RequestMapping(value = "api/v1/agenda", produces = "application/json")
 public class AgendaController {
 
     private final AgendaService agendaService;

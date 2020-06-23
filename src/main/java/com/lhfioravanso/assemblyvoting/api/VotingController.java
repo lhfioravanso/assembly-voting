@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Api(value = "voting")
-@RequestMapping(value = "v1/voting", produces = "application/json")
+@RequestMapping(value = "api/v1/voting", produces = "application/json")
 public class VotingController {
 
     private final VotingService votingService;
