@@ -4,6 +4,11 @@ public class AgendaResponseDto {
     private String id;
     private String name;
 
+    public AgendaResponseDto(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public String getId() {
         return id;
     }

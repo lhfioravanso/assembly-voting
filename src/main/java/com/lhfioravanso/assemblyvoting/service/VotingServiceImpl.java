@@ -22,18 +22,16 @@ public class VotingServiceImpl implements VotingService{
 
     private final VotingRepository votingRepository;
     private final AgendaRepository agendaRepository;
-    private final ModelMapper votingMapper;
-    private final ModelMapper agendaMapper;
+    private final ModelMapper modelMapper;
     private final Environment environment;
     private final CpfService cpfService;
 
     @Autowired
-    public VotingServiceImpl(VotingRepository votingRepository, ModelMapper votingMapper, ModelMapper agendaMapper,
+    public VotingServiceImpl(VotingRepository votingRepository, ModelMapper modelMapper,
                              AgendaRepository agendaRepository, Environment environment, CpfService cpfService) {
         this.votingRepository = votingRepository;
         this.agendaRepository = agendaRepository;
-        this.votingMapper = votingMapper;
-        this.agendaMapper = agendaMapper;
+        this.modelMapper = modelMapper;
         this.environment = environment;
         this.cpfService = cpfService;
     }
@@ -43,14 +41,14 @@ public class VotingServiceImpl implements VotingService{
         List<Voting> votingList = this.votingRepository.findAll();
 
         return votingList.stream().map(
-                voting -> votingMapper.map(voting, VotingResponseDto.class)
+                voting -> modelMapper.map(voting, VotingResponseDto.class)
         ).collect(Collectors.toList());
     }
 
     @Override
     public VotingResponseDto getVoting(String id) {
         Voting voting = findVoting(id);
-        return votingMapper.map(voting, VotingResponseDto.class);
+        return modelMapper.map(voting, VotingResponseDto.class);
     }
 
     @Override
@@ -65,7 +63,7 @@ public class VotingServiceImpl implements VotingService{
         Voting voting = new Voting(agenda, minutesToExpiration);
         voting = this.votingRepository.insert(voting);
 
-        return votingMapper.map(voting, VotingResponseDto.class);
+        return modelMapper.map(voting, VotingResponseDto.class);
     }
 
     @Override
@@ -103,8 +101,7 @@ public class VotingServiceImpl implements VotingService{
         );
 
         VotingResultResponseDto resultResponseDto = new VotingResultResponseDto();
-        resultResponseDto.setAgenda(agendaMapper.map(voting.getAgenda(), AgendaResponseDto.class));
-        resultResponseDto.setDecision(voteCount.getYes()>voteCount.getNo()? Answer.YES : Answer.NO);
+        resultResponseDto.setAgenda(modelMapper.map(voting.getAgenda(), AgendaResponseDto.class));
         resultResponseDto.setVoteCount(voteCount);
 
         return resultResponseDto;

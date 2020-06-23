@@ -58,7 +58,7 @@
             <artifactId>modelmapper</artifactId>
             <version>2.3.8</version>
         </dependency>
-    </dependencies>
+	</dependencies>
 
 	<build>
 		<plugins>

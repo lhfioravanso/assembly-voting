@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
 public class AgendaServiceImpl implements AgendaService {
 
     private final AgendaRepository agendaRepository;
-    private final ModelMapper agendaMapper;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public AgendaServiceImpl(AgendaRepository agendaRepository, ModelMapper agendaMapper) {
+    public AgendaServiceImpl(AgendaRepository agendaRepository, ModelMapper modelMapper) {
         this.agendaRepository = agendaRepository;
-        this.agendaMapper = agendaMapper;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class AgendaServiceImpl implements AgendaService {
         List<Agenda> agendaList = this.agendaRepository.findAll();
 
         return agendaList.stream().map(
-            agenda -> agendaMapper.map(agenda, AgendaResponseDto.class)
+            agenda -> modelMapper.map(agenda, AgendaResponseDto.class)
         ).collect(Collectors.toList());
     }
 
@@ -39,7 +39,7 @@ public class AgendaServiceImpl implements AgendaService {
         Agenda agenda = this.agendaRepository.findById(new ObjectId(id)).
                 orElseThrow(() -> new NotFoundException("Agenda not found."));
 
-        return agendaMapper.map(agenda, AgendaResponseDto.class);
+        return modelMapper.map(agenda, AgendaResponseDto.class);
     }
 
     @Override
@@ -47,6 +47,6 @@ public class AgendaServiceImpl implements AgendaService {
         Agenda agenda = new Agenda(dto.getName());
         agenda = agendaRepository.insert(agenda);
 
-        return agendaMapper.map(agenda, AgendaResponseDto.class);
+        return modelMapper.map(agenda, AgendaResponseDto.class);
     }
 }

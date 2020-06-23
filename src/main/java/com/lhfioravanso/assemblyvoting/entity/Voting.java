@@ -23,6 +23,10 @@ public class Voting {
 
     private List<Vote> votes;
 
+    public Voting() {
+        this.votes = new ArrayList<>();
+    }
+
     public Voting(Agenda agenda, Integer minutesToExpiration) {
         this.agenda = agenda;
         this.minutesToExpiration = minutesToExpiration;
