@@ -4,11 +4,12 @@ import com.lhfioravanso.assemblyvoting.dto.*;
 import com.lhfioravanso.assemblyvoting.entity.VoteCount;
 import com.lhfioravanso.assemblyvoting.service.VotingService;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -19,7 +20,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class VotingControllerTest {
 
     @Mock

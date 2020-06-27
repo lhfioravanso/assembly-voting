@@ -1,14 +1,15 @@
 package com.lhfioravanso.assemblyvoting.entity;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class VotingTest {
 
     @Test
@@ -37,6 +38,5 @@ public class VotingTest {
 
         assertTrue(voting.cpfAlreadyVoted("111"));
     }
-
 
 }

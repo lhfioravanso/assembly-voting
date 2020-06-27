@@ -4,11 +4,12 @@ import com.lhfioravanso.assemblyvoting.dto.AgendaRequestDto;
 import com.lhfioravanso.assemblyvoting.dto.AgendaResponseDto;
 import com.lhfioravanso.assemblyvoting.service.AgendaService;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -18,7 +19,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class AgendaControllerTest {
 
     @Mock

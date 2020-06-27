@@ -70,14 +70,7 @@ public class VotingServiceImpl implements VotingService{
     public VoteResponseDto addVote(VoteRequestDto dto) {
         Voting voting = findVoting(dto.getVotingId());
 
-        if (voting.isExpired())
-            throw new BusinessException("Voting already expired.");
-
-        if (voting.cpfAlreadyVoted(dto.getCpf()))
-            throw new BusinessException("Associated with CPF ("+dto.getCpf()+") already voted.");
-
-        if (cpfService.isAbleToVote(dto.getCpf()))
-            throw new BusinessException("CPF is unable to vote.");
+        validateVote(voting, dto);
 
         Vote vote = new Vote(dto.getCpf(), dto.getAnswer());
         voting.addVote(vote);
@@ -110,5 +103,16 @@ public class VotingServiceImpl implements VotingService{
     private Voting findVoting(String id){
        return this.votingRepository.findById(new ObjectId(id)).
                 orElseThrow(() -> new NotFoundException("Voting not found."));
+    }
+
+    private void validateVote(Voting voting, VoteRequestDto dto){
+        if (voting.isExpired())
+            throw new BusinessException("Voting already expired.");
+
+        if (voting.cpfAlreadyVoted(dto.getCpf()))
+            throw new BusinessException("Associated with CPF ("+dto.getCpf()+") already voted.");
+
+        if (cpfService.isAbleToVote(dto.getCpf()))
+            throw new BusinessException("CPF is unable to vote.");
     }
 }
