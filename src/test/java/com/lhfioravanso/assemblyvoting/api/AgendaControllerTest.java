@@ -13,6 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,7 +51,7 @@ public class AgendaControllerTest {
     }
 
     @Test
-    public void shouldCreateAgenda() {
+    public void shouldCreateAgenda() throws URISyntaxException {
         String agendaName = "test";
         AgendaRequestDto req = new AgendaRequestDto(agendaName);
         AgendaResponseDto resp = new AgendaResponseDto(new ObjectId().toHexString(), agendaName);
@@ -58,7 +59,7 @@ public class AgendaControllerTest {
 
         ResponseEntity<?> response = agendaController.create(req);
 
-        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals(response.getStatusCode(), HttpStatus.CREATED);
         assertNotNull(response.getBody());
     }
 }

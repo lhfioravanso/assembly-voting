@@ -13,6 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,7 +53,7 @@ public class VotingControllerTest {
     }
 
     @Test
-    public void shouldCreateVoting() {
+    public void shouldCreateVoting() throws URISyntaxException {
         VotingRequestDto req = new VotingRequestDto();
         VotingResponseDto resp = new VotingResponseDto();
 
@@ -60,19 +61,19 @@ public class VotingControllerTest {
         Mockito.when(votingService.createVoting(req)).thenReturn(resp);
 
         ResponseEntity<?> response = votingController.create(req);
-        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals(response.getStatusCode(), HttpStatus.CREATED);
         assertNotNull(response.getBody());
     }
 
     @Test
-    public void shouldVote(){
+    public void shouldVote() throws URISyntaxException {
         VoteRequestDto req = new VoteRequestDto();
         VoteResponseDto resp = new VoteResponseDto(true);
 
         Mockito.when(votingService.addVote(req)).thenReturn(resp);
 
         ResponseEntity<?> response = votingController.vote(req);
-        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals(response.getStatusCode(), HttpStatus.CREATED);
         assertNotNull(response.getBody());
     }
 

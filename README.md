@@ -11,6 +11,7 @@ API REST para votação em assembleia
 - ModelMapper
 - Swagger
 - JUnit
+- Mockito
 
 ## Requisitos
 - MongoDB [ informar se necessario a configuração do banco na application.properties ]
