@@ -11,6 +11,7 @@ import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,22 +19,24 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class VotingServiceImpl implements VotingService{
+public class VotingServiceImpl implements VotingService {
 
     private final VotingRepository votingRepository;
     private final AgendaRepository agendaRepository;
     private final ModelMapper modelMapper;
     private final Environment environment;
     private final CpfService cpfService;
+    private final MessagingService messagingService;
 
     @Autowired
-    public VotingServiceImpl(VotingRepository votingRepository, ModelMapper modelMapper,
-                             AgendaRepository agendaRepository, Environment environment, CpfService cpfService) {
+    public VotingServiceImpl(VotingRepository votingRepository, ModelMapper modelMapper, AgendaRepository agendaRepository,
+                             Environment environment, CpfService cpfService, MessagingService messagingService) {
         this.votingRepository = votingRepository;
         this.agendaRepository = agendaRepository;
         this.modelMapper = modelMapper;
         this.environment = environment;
         this.cpfService = cpfService;
+        this.messagingService = messagingService;
     }
 
     @Override
@@ -114,5 +117,24 @@ public class VotingServiceImpl implements VotingService{
 
         if (cpfService.isAbleToVote(dto.getCpf()))
             throw new BusinessException("CPF is unable to vote.");
+    }
+
+    @Scheduled(fixedDelay = 1000)
+    private void closeAndBroadcastVotingResult() {
+        List<Voting> votingList = findAllExpiredVotingsButNotClosed();
+
+        votingList.forEach(voting -> {
+            VotingResultResponseDto votingResult = getVotingResult(voting.getId().toHexString());
+            messagingService.send(votingResult);
+
+            voting.setClosed(true);
+            votingRepository.save(voting);
+        });
+    }
+
+    private List<Voting> findAllExpiredVotingsButNotClosed() {
+        return votingRepository.findAll().stream().filter(
+                voting -> voting.isExpired() && !voting.isClosed()
+        ).collect(Collectors.toList());
     }
 }

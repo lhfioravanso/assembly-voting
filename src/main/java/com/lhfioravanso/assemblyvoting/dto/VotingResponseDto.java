@@ -17,6 +17,8 @@ public class VotingResponseDto {
 
     private List<Vote> votes;
 
+    private boolean closed;
+
     public String getId() {
         return id;
     }
@@ -55,5 +57,13 @@ public class VotingResponseDto {
 
     public void setVotes(List<Vote> votes) {
         this.votes = votes;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
     }
 }

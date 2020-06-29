@@ -12,9 +12,11 @@ API REST para votação em assembleia
 - Swagger
 - JUnit
 - Mockito
+- Kafka
+- Docker
 
 ## Requisitos
-- MongoDB [ informar se necessario a configuração do banco na application.properties ]
+- Docker instalado na máquina
 
 ## Rodar a aplicação
 
