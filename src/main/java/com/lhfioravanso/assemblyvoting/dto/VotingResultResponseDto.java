@@ -1,6 +1,5 @@
 package com.lhfioravanso.assemblyvoting.dto;
 
-import com.lhfioravanso.assemblyvoting.entity.Answer;
 import com.lhfioravanso.assemblyvoting.entity.VoteCount;
 
 public class VotingResultResponseDto {

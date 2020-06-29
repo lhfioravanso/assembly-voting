@@ -23,6 +23,8 @@ public class Voting {
 
     private List<Vote> votes;
 
+    private boolean closed;
+
     public Voting() {
         this.votes = new ArrayList<>();
     }
@@ -84,6 +86,14 @@ public class Voting {
 
     public boolean cpfAlreadyVoted(String cpf){
         return this.votes.stream().anyMatch(vote -> vote.getCpf().equals(cpf));
+    }
+
+    public boolean isClosed() {
+        return this.closed;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
     }
 
     @Override
